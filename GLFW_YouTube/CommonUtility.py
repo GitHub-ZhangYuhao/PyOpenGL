@@ -5,10 +5,103 @@ import numpy as np
 import pyrr
 from PIL import Image
 
+#---------------------Functions---------------------
+def window_resize(window, width, height):
+    glViewport(0, 0, width, height)
+
+def initWindow(width ,height):
+    # initializing glfw library
+    if not glfw.init():
+        raise Exception("glfw can not be initialized!")
+
+    # creating the window
+    window = glfw.create_window(1280, 720, "My OpenGL window", None, None)
+
+    # check if window was created
+    if not window:
+        glfw.terminate()
+        raise Exception("glfw window can not be created!")
+
+    # set window's position
+    glfw.set_window_pos(window, 400, 200)
+
+    # set the callback function for window resize
+    glfw.set_window_size_callback(window, window_resize)
+
+    # make the context current
+    glfw.make_context_current(window)
+
+    return window
+
+def window_resize(window, width, height):
+    glViewport(0, 0, width, height)
+
+def initWindow(width ,height):
+    # initializing glfw library
+    if not glfw.init():
+        raise Exception("glfw can not be initialized!")
+
+    # creating the window
+    window = glfw.create_window(1280, 720, "My OpenGL window", None, None)
+
+    # check if window was created
+    if not window:
+        glfw.terminate()
+        raise Exception("glfw window can not be created!")
+
+    # set window's position
+    glfw.set_window_pos(window, 400, 200)
+
+    # set the callback function for window resize
+    glfw.set_window_size_callback(window, window_resize)
+
+    # make the context current
+    glfw.make_context_current(window)
+
+    return window
+
+#---------------------Functions---------------------
+
+#---------------------Class---------------------
+class Shader:
+    m_shader = 0
+    def __init__(self , VertexFilePath , FragmentFilePath):
+        vertexCode = ""
+        fragmentCode =  ""
+        with open(VertexFilePath , "r") as vertFile:
+            vertexCode = vertFile.read()
+        with open(FragmentFilePath , "r") as fragFile:
+            fragmentCode = fragFile.read()
+        #Debug
+        #print(vertexCode + "\n")
+        #print(fragmentCode + "\n")
+
+        self.m_shader = compileProgram(compileShader(vertexCode ,GL_VERTEX_SHADER),
+                                       compileShader(fragmentCode , GL_FRAGMENT_SHADER))
+
+    def get_shader(self):
+        return self.m_shader
+    def use(self):
+        glUseProgram(self.m_shader)
+    def set_float(self , name,value):
+        variLocation = glGetUniformLocation( self.m_shader , name)
+        glUniform1f(variLocation ,value)
+
+    def set_Int(self , name,value):
+        variLocation = glGetUniformLocation( self.m_shader , name)
+        glUniform1i(variLocation ,value)
+
+    def set_Vec(self, name, value):
+        variLocation = glGetUniformLocation(self.m_shader, name)
+        glUniform3fv(variLocation , 1 , value)
+
+    def set_Mat4(self, name, value):
+        variLocation = glGetUniformLocation(self.m_shader, name)
+        glUniformMatrix4fv(variLocation , 1 ,GL_FALSE , value)
 
 
 class Texture:
-
+    # 初始化Texture后直接调用SetShaderBindIndex()    把Texture 绑定到Shader的Texture? (?是索引)
     m_texture = 0
     m_image = 0
     m_img_data = 0
@@ -35,9 +128,9 @@ class Texture:
 
     #设置Shader绑定Uniform Texture_
     def SetShaderBindIndex(self , Shader , TextureBindIndex):
-        glUseProgram(Shader)
+        glUseProgram(Shader.get_shader())
         BindName = "Texture" + str(TextureBindIndex)
-        glUniform1i(glGetUniformLocation(Shader , BindName) , TextureBindIndex)
+        glUniform1i(glGetUniformLocation(Shader.get_shader() , BindName) , TextureBindIndex)
         glActiveTexture(GL_TEXTURE0 + TextureBindIndex)
 
 
@@ -50,3 +143,4 @@ class Texture:
         self.CreateTexture()
         self.SetImageData()
         self.FillImageData()
+#---------------------Class---------------------
