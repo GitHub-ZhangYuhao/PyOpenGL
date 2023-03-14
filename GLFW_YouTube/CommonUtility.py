@@ -60,7 +60,7 @@ def initWindow(width ,height):
 
     return window
 
-def CreateTexture(width , height  , Format, WrapMode , FilterMode , data = None):
+def CreateRT(width , height  , Format = GL_RGBA, WrapMode = GL_REPEAT , FilterMode = GL_LINEAR , data = None):
     texture = glGenTextures(1)
     glBindTexture(GL_TEXTURE_2D, texture)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, WrapMode)
@@ -69,7 +69,8 @@ def CreateTexture(width , height  , Format, WrapMode , FilterMode , data = None)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, FilterMode)
     glTexImage2D(GL_TEXTURE_2D, 0, Format, width, height, 0, Format,
                  GL_UNSIGNED_BYTE, data)
-
+    glBindTexture(GL_TEXTURE_2D , 0)
+    return texture
 
 #---------------------Functions---------------------
 
@@ -120,6 +121,9 @@ class Texture:
     m_WrapMode = GL_REPEAT
     m_FilterMode = GL_LINEAR
 
+    def GetExtent(self):
+        return (self.m_image.width , self.m_image.height)
+
     def CreateTexture(self):
         self.m_texture = glGenTextures(1)
         glBindTexture(GL_TEXTURE_2D , self.m_texture)
@@ -165,17 +169,18 @@ class FrameBuffer:
     def Get_FBO(self):
         return self.m_Frame_Buffer
 
-    def __init__(self , texture):
+    def __init__(self , texture , width , height):
         self.m_Texture = texture;
 
         self.m_Depth_Buff = glGenRenderbuffers(1)
-        self.m_Frame_Buffer = glGenRenderbuffers(1)
+        self.m_Frame_Buffer = glGenFramebuffers(1)
 
         glBindRenderbuffer(GL_RENDERBUFFER , self.m_Depth_Buff)
-        glRenderbufferStorage(GL_RENDERBUFFER , GL_DEPTH_COMPONENT ,self.m_Texture.m_Width , self.m_Texture.m_Height)
+        glRenderbufferStorage(GL_RENDERBUFFER , GL_DEPTH_COMPONENT ,width , height)
 
         glBindFramebuffer(GL_FRAMEBUFFER , self.m_Frame_Buffer)
         glFramebufferTexture2D(GL_FRAMEBUFFER , GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D , self.m_Texture , 0)
         glFramebufferRenderbuffer(GL_FRAMEBUFFER , GL_DEPTH_ATTACHMENT , GL_RENDERBUFFER , self.m_Depth_Buff)
-
+        glBindFramebuffer(GL_FRAMEBUFFER , 0)
+        glBindRenderbuffer(GL_RENDERBUFFER , 0)
 #---------------------Class---------------------

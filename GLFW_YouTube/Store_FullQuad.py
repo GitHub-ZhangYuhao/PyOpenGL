@@ -26,6 +26,11 @@ def Main_OpenGL():
     FragFilePath = "shaders/Fragment.frag"
     shader = Shader(VertexFilePath, FragFilePath)
 
+    #FBO
+    FrameRT = CreateRT(512 , 512 )
+    FBO = FrameBuffer(FrameRT ,512 , 512)
+    #FBO
+
     #Texture Create
     TexturePath = "textures/OilTex2.png"
     texture = Texture(TexturePath)
