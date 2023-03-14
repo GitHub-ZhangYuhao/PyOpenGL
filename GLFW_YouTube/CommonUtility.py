@@ -72,6 +72,19 @@ def CreateRT(width , height  , Format = GL_RGBA, WrapMode = GL_REPEAT , FilterMo
     glBindTexture(GL_TEXTURE_2D , 0)
     return texture
 
+def Cursor_Event(window):
+    WindowSize_X , WindowSize_Y = glfw.get_window_size(window)
+    cursorPos_X , cursorPos_Y = glfw.get_cursor_pos(window)
+    ScreenCoord = ( cursorPos_X / WindowSize_X , cursorPos_Y / WindowSize_Y)
+    if(ScreenCoord[0] >1 or ScreenCoord[0] <0 or ScreenCoord[1]>1 or ScreenCoord[1]<0):
+        return
+    print( ScreenCoord)
+
+def ProcessInput(window):
+    if(glfw.get_key(window , glfw.KEY_ESCAPE) == glfw.PRESS ):
+        glfw.set_window_should_close(window , True)
+    Cursor_Event(window)
+
 #---------------------Functions---------------------
 
 #---------------------Class---------------------

@@ -58,6 +58,7 @@ def Main_OpenGL():
     # the main application loop
     while not glfw.window_should_close(window):
         glfw.poll_events()
+        ProcessInput(window)
 
         glClear(GL_COLOR_BUFFER_BIT)
 
