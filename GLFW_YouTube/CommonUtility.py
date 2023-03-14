@@ -1,9 +1,13 @@
+import os.path
+
 import glfw
 from OpenGL.GL import *
 from OpenGL.GL.shaders import compileProgram, compileShader
 import numpy as np
 import pyrr
 from PIL import Image
+from glfw import *
+
 
 #---------------------Functions---------------------
 def window_resize(window, width, height):
@@ -11,7 +15,7 @@ def window_resize(window, width, height):
 
 def initWindow(width ,height):
     # initializing glfw library
-    if not glfw.init():
+    if not init():
         raise Exception("glfw can not be initialized!")
 
     # creating the window
@@ -71,6 +75,20 @@ def CreateRT(width , height  , Format = GL_RGBA, WrapMode = GL_REPEAT , FilterMo
                  GL_UNSIGNED_BYTE, data)
     glBindTexture(GL_TEXTURE_2D , 0)
     return texture
+
+def SaveTexture(window , Path ,width , height , Format=GL_RGBA ,Type=GL_UNSIGNED_BYTE):
+    Cur_Width , Cur_Height = glfw.get_window_size(window)
+    glViewport(0,0, width , height)
+
+    pixels = glReadPixels(0,0, width , height,Format , Type)
+    img_out = Image.frombytes("RGBA" , (width , height) ,pixels)
+    img_out = img_out.transpose(Image.FLIP_TOP_BOTTOM)
+
+    folderPath = os.path.dirname(Path)
+    if not os.path.exists(folderPath):
+        os.makedirs(folderPath)
+    img_out.save(Path )
+    glViewport(0,0,Cur_Width , Cur_Height)
 
 def Cursor_Event(window):
     WindowSize_X , WindowSize_Y = glfw.get_window_size(window)

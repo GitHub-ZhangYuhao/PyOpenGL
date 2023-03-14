@@ -7,6 +7,7 @@ import numpy as np
 from CommonUtility import *
 
 
+#-glReadPixels()-#
 def Main_OpenGL():
 
     window = initWindow(800 , 600)
@@ -35,6 +36,7 @@ def Main_OpenGL():
     TexturePath = "textures/OilTex2.png"
     texture = Texture(TexturePath)
     texture.SetShaderBindIndex(shader, 0)
+
 
     VBO = glGenBuffers(1)
     glBindBuffer(GL_ARRAY_BUFFER, VBO)
@@ -68,6 +70,10 @@ def Main_OpenGL():
         glfw.swap_buffers(window)
 
         print()
+
+    # TODO :获取 Image 测试
+    SaveTexture(window , "Output/Texture_Out.png" , 800 ,600)
+    # TODO :获取 Image 测试
 
     # terminate glfw, free up allocated resources
     glfw.terminate()
