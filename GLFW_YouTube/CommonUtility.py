@@ -60,6 +60,17 @@ def initWindow(width ,height):
 
     return window
 
+def CreateTexture(width , height  , Format, WrapMode , FilterMode , data = None):
+    texture = glGenTextures(1)
+    glBindTexture(GL_TEXTURE_2D, texture)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, WrapMode)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, WrapMode)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, FilterMode)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, FilterMode)
+    glTexImage2D(GL_TEXTURE_2D, 0, Format, width, height, 0, Format,
+                 GL_UNSIGNED_BYTE, data)
+
+
 #---------------------Functions---------------------
 
 #---------------------Class---------------------
@@ -98,7 +109,6 @@ class Shader:
     def set_Mat4(self, name, value):
         variLocation = glGetUniformLocation(self.m_shader, name)
         glUniformMatrix4fv(variLocation , 1 ,GL_FALSE , value)
-
 
 class Texture:
     # 初始化Texture后直接调用SetShaderBindIndex()    把Texture 绑定到Shader的Texture? (?是索引)
@@ -143,4 +153,29 @@ class Texture:
         self.CreateTexture()
         self.SetImageData()
         self.FillImageData()
+
+class FrameBuffer:
+    m_Texture = None
+    m_Frame_Buffer = None
+    m_Depth_Buff = None
+
+    def Get_Extent(self):
+        return (self.m_Texture.m_Width , self.m_Texture.m_Height)
+
+    def Get_FBO(self):
+        return self.m_Frame_Buffer
+
+    def __init__(self , texture):
+        self.m_Texture = texture;
+
+        self.m_Depth_Buff = glGenRenderbuffers(1)
+        self.m_Frame_Buffer = glGenRenderbuffers(1)
+
+        glBindRenderbuffer(GL_RENDERBUFFER , self.m_Depth_Buff)
+        glRenderbufferStorage(GL_RENDERBUFFER , GL_DEPTH_COMPONENT ,self.m_Texture.m_Width , self.m_Texture.m_Height)
+
+        glBindFramebuffer(GL_FRAMEBUFFER , self.m_Frame_Buffer)
+        glFramebufferTexture2D(GL_FRAMEBUFFER , GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D , self.m_Texture , 0)
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER , GL_DEPTH_ATTACHMENT , GL_RENDERBUFFER , self.m_Depth_Buff)
+
 #---------------------Class---------------------

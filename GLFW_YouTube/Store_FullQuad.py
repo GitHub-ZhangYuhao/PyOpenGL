@@ -34,19 +34,15 @@ def Main_OpenGL():
     VBO = glGenBuffers(1)
     glBindBuffer(GL_ARRAY_BUFFER, VBO)
     glBufferData(GL_ARRAY_BUFFER, vertices.nbytes, vertices, GL_STATIC_DRAW)
-
     EBO = glGenBuffers(1)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER , EBO)
     glBufferData(GL_ELEMENT_ARRAY_BUFFER , indices.nbytes , indices ,GL_STATIC_DRAW)
-
     #position
     glEnableVertexAttribArray(0)
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(ctypes.c_float)*8, ctypes.c_void_p(0))
-
     #color
     glEnableVertexAttribArray(1)
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(ctypes.c_float)*8, ctypes.c_void_p(3*sizeof(ctypes.c_float)))
-
     #uv
     glEnableVertexAttribArray(2)
     glVertexAttribPointer(2 ,2, GL_FLOAT, GL_FALSE, sizeof(ctypes.c_float)*8, ctypes.c_void_p(6*sizeof(ctypes.c_float)))
