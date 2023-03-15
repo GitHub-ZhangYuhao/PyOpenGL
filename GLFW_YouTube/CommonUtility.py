@@ -9,6 +9,12 @@ from PIL import Image
 from glfw import *
 
 
+'''UI'''
+from PySide2.QtGui import QPixmap ,QPicture
+from PySide2.QtWidgets import QApplication , QLabel
+
+
+
 #---------------------Functions---------------------
 def window_resize(window, width, height):
     glViewport(0, 0, width, height)
@@ -215,3 +221,26 @@ class FrameBuffer:
         glBindFramebuffer(GL_FRAMEBUFFER , 0)
         glBindRenderbuffer(GL_RENDERBUFFER , 0)
 #---------------------Class---------------------
+
+
+'''UI_Class'''
+class ImageLabel:
+    m_ImagePath = ""
+    m_Label = None
+
+    def __init__(self ,ImagePath):
+        self.CreateImageLabelByPath(ImagePath)
+
+    def CreateImageLabelByPath(self , Path):
+        self.m_ImagePath = Path
+        pixmap = QPixmap(Path)
+        label = QLabel()
+        label.setPixmap(pixmap)
+        self.m_Label = label
+
+    def SetImageLabelSize(self , Size):
+        self.m_Label.setMaximumSize(Size , Size)
+        self.m_Label.setMinimumSize(Size , Size)
+
+    def Show(self):
+        self.m_Label.show()
