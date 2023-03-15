@@ -12,7 +12,7 @@ from glfw import *
 '''UI'''
 from PySide2.QtGui import QPixmap ,QPicture
 from PySide2.QtWidgets import QApplication , QLabel
-
+from PySide2 import QtWidgets ,QtCore
 
 
 #---------------------Functions---------------------
@@ -224,23 +224,4 @@ class FrameBuffer:
 
 
 '''UI_Class'''
-class ImageLabel:
-    m_ImagePath = ""
-    m_Label = None
 
-    def __init__(self ,ImagePath):
-        self.CreateImageLabelByPath(ImagePath)
-
-    def CreateImageLabelByPath(self , Path):
-        self.m_ImagePath = Path
-        pixmap = QPixmap(Path)
-        label = QLabel()
-        label.setPixmap(pixmap)
-        self.m_Label = label
-
-    def SetImageLabelSize(self , Size):
-        self.m_Label.setMaximumSize(Size , Size)
-        self.m_Label.setMinimumSize(Size , Size)
-
-    def Show(self):
-        self.m_Label.show()
