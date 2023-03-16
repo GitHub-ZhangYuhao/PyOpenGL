@@ -22,8 +22,9 @@ indices = np.array(indices, dtype=np.uint32)
 class GLWidget(QtWidgets.QOpenGLWidget):
     def __init__(self):
         super(GLWidget, self).__init__()
-        self.setMinimumSize(512 ,512)
-
+        #self.setMinimumSize(256 ,256)
+        self.Texture_Array = []
+        self.setFixedSize(256 , 256)
 
     def initializeGL(self):
         # Shader Create
@@ -73,71 +74,15 @@ class GLWidget(QtWidgets.QOpenGLWidget):
         y = Mouse_Pos.y() / self.height()
         return (x,y)
 
+    def Dynamic_Add_Texture(self):
+        pass
 
-class ImageLabel(QtWidgets.QWidget):
-    def __init__(self , Path):
-        super(ImageLabel, self).__init__()
 
-        self.PathLabel = QtWidgets.QLabel(Path)     # path
 
-        self.ImageLabel = QtWidgets.QLabel()
-        self.ImageLabel.setPixmap(QPixmap(Path))
-        self.ImageLabel.setFixedSize(200 , 200)
-        self.ImageLabel.setScaledContents(True)
-
-        Layout = QtWidgets.QVBoxLayout()
-        Layout.addWidget(self.ImageLabel)
-        Layout.addWidget(self.PathLabel)
-
-        self.setLayout(Layout)
-
-class MainApp(QtWidgets.QMainWindow):
-
-    def __init__(self):
-        super().__init__()
-        self.ImageLabel_Array = []
-        self.InitUI()
-
-    def InitUI(self):
-        self.setWindowTitle("主窗口")
-        #self.setFixedSize(500, 200)  # 设置窗口固定大小
-        self.main_widget = QtWidgets.QWidget()
-
-        self.main_layout = QtWidgets.QVBoxLayout()
-        self.main_widget.setLayout(self.main_layout)
-
-        self.btn_1 = QtWidgets.QPushButton("按钮一")
-        self.btn_1.clicked.connect(lambda:self.AddImageLabelList("textures/OilTex2.png"))
-        self.main_layout.addWidget(self.btn_1)
-
-        self.btn_2 = QtWidgets.QPushButton("按钮二")
-        self.btn_2.clicked.connect(self.PopImageLabel)
-        self.main_layout.addWidget(self.btn_2)
-
-        self.GLWindow = GLWidget()
-        self.main_layout.addWidget(self.GLWindow)
-
-        #TODO : Label Test
-        Path = "textures/OilTex2.png"
-        self.AddImageLabelList(Path)
-
-        self.setCentralWidget(self.main_widget)
-
-    def AddImageLabelList(self , Path):
-        imageLabel = ImageLabel(Path)
-        self.main_layout.addWidget(imageLabel)
-        self.ImageLabel_Array.append(imageLabel)
-        self.setCentralWidget(self.main_widget)
-
-    def PopImageLabel(self):
-        self.main_layout.removeWidget(self.ImageLabel_Array[len(self.ImageLabel_Array) - 1])
-        self.ImageLabel_Array.pop()
-        self.setCentralWidget(self.main_widget)
-        self.setCentralWidget(self.main_widget)
 
 
 if __name__ == '__main__':
     app = QApplication([])
-    widget = MainApp()
+    widget = GLWidget()
     widget.show()
     app.exec_()
