@@ -22,6 +22,7 @@ indices = np.array(indices, dtype=np.uint32)
 class GLWidget(QtWidgets.QOpenGLWidget):
     def __init__(self):
         super(GLWidget, self).__init__()
+        self.setMinimumSize(512 ,512)
 
 
     def initializeGL(self):
@@ -33,7 +34,7 @@ class GLWidget(QtWidgets.QOpenGLWidget):
         # Texture Create
         TexturePath = "textures/OilTex2.png"
         texture = Texture(TexturePath)
-        texture.SetShaderBindIndex(shader, 0)
+        texture.SetShaderBindIndex(shader, 1)
 
         VBO = glGenBuffers(1)
         glBindBuffer(GL_ARRAY_BUFFER, VBO)
@@ -57,35 +58,86 @@ class GLWidget(QtWidgets.QOpenGLWidget):
         glClearColor(0, 0.1, 0.1, 1)
 
     def paintGL(self):
+        glClearColor(1, 0.1, 0.1, 1)
         gl.glClear(gl.GL_COLOR_BUFFER_BIT)
         glDrawElements(GL_TRIANGLES, len(indices), GL_UNSIGNED_INT, None)
 
+    def mouseMoveEvent(self, e):
 
-class ButtonApp(QtWidgets.QMainWindow):
+        self.Mouse_Pos = self.Get_Mouse_Pos(e)
+        print(self.Mouse_Pos)
+
+    def Get_Mouse_Pos(self , event):
+        Mouse_Pos = event.localPos()
+        x = Mouse_Pos.x() / self.width()
+        y = Mouse_Pos.y() / self.height()
+        return (x,y)
+
+
+class ImageLabel(QtWidgets.QWidget):
+    def __init__(self , Path):
+        super(ImageLabel, self).__init__()
+
+        self.PathLabel = QtWidgets.QLabel(Path)     # path
+
+        self.ImageLabel = QtWidgets.QLabel()
+        self.ImageLabel.setPixmap(QPixmap(Path))
+        self.ImageLabel.setFixedSize(200 , 200)
+        self.ImageLabel.setScaledContents(True)
+
+        Layout = QtWidgets.QVBoxLayout()
+        Layout.addWidget(self.ImageLabel)
+        Layout.addWidget(self.PathLabel)
+
+        self.setLayout(Layout)
+
+class MainApp(QtWidgets.QMainWindow):
+
     def __init__(self):
-        '''
-        州的先生 https://zmister.com
-        '''
         super().__init__()
-        self.setWindowTitle("Qt For Python按钮控件 | 州的先生")
-        self.setFixedSize(500, 200)  # 设置窗口固定大小
+        self.ImageLabel_Array = []
+        self.InitUI()
+
+    def InitUI(self):
+        self.setWindowTitle("主窗口")
+        #self.setFixedSize(500, 200)  # 设置窗口固定大小
         self.main_widget = QtWidgets.QWidget()
 
         self.main_layout = QtWidgets.QVBoxLayout()
         self.main_widget.setLayout(self.main_layout)
 
         self.btn_1 = QtWidgets.QPushButton("按钮一")
+        self.btn_1.clicked.connect(lambda:self.AddImageLabelList("textures/OilTex2.png"))
         self.main_layout.addWidget(self.btn_1)
+
+        self.btn_2 = QtWidgets.QPushButton("按钮二")
+        self.btn_2.clicked.connect(self.PopImageLabel)
+        self.main_layout.addWidget(self.btn_2)
 
         self.GLWindow = GLWidget()
         self.main_layout.addWidget(self.GLWindow)
 
+        #TODO : Label Test
+        Path = "textures/OilTex2.png"
+        self.AddImageLabelList(Path)
 
+        self.setCentralWidget(self.main_widget)
+
+    def AddImageLabelList(self , Path):
+        imageLabel = ImageLabel(Path)
+        self.main_layout.addWidget(imageLabel)
+        self.ImageLabel_Array.append(imageLabel)
+        self.setCentralWidget(self.main_widget)
+
+    def PopImageLabel(self):
+        self.main_layout.removeWidget(self.ImageLabel_Array[len(self.ImageLabel_Array) - 1])
+        self.ImageLabel_Array.pop()
+        self.setCentralWidget(self.main_widget)
         self.setCentralWidget(self.main_widget)
 
 
 if __name__ == '__main__':
     app = QApplication([])
-    widget = ButtonApp()
+    widget = MainApp()
     widget.show()
     app.exec_()
